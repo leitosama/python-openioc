@@ -6,7 +6,7 @@ import importlib.resources
 from lxml import etree
 
 from .exceptions import ValidationError
-from .models import IOC
+from .models import IOC, Indicator, IndicatorItem
 
 
 def validate(ioc: IOC) -> None:
@@ -30,6 +30,12 @@ def validate_10(ioc: IOC) -> None:
 
     if errors:
         raise ValidationError(errors, source_format="1.0")
+
+    # XSD leaves condition as xs:string; check v1.0 values programmatically
+    condition_errors: list[str] = []
+    _check_conditions_10(ioc.definition, condition_errors)  # type: ignore[arg-type]
+    if condition_errors:
+        raise ValidationError(condition_errors, source_format="1.0")
 
     try:
         element = IOCv10Writer().write_element(ioc)
@@ -73,6 +79,19 @@ def _load_schema_10() -> etree.XMLSchema:
     with importlib.resources.as_file(xsd_path) as p:
         schema_doc = etree.parse(str(p))
     return etree.XMLSchema(schema_doc)
+
+
+def _check_conditions_10(node: Indicator, errors: list[str]) -> None:
+    from .constants import CONDITION10_VALUES
+
+    for child in node.children:
+        if isinstance(child, Indicator):
+            _check_conditions_10(child, errors)
+        elif isinstance(child, IndicatorItem) and child.condition not in CONDITION10_VALUES:
+            errors.append(
+                f"IndicatorItem {child.id!r}: condition {child.condition!r} "
+                f"is not valid for v1.0; expected one of {sorted(CONDITION10_VALUES)}"
+            )
 
 
 @functools.lru_cache(maxsize=1)

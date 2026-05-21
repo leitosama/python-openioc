@@ -77,5 +77,5 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 # lxml-stubs incorrectly types nsmap as Mapping[str, str] excluding None keys.
 # The type: ignore on that line is unused when stubs aren't auto-discovered.
-module = "openioc.v11.writer"
+module = ["openioc.v10.writer", "openioc.v11.writer"]
 warn_unused_ignores = false

@@ -1,5 +1,6 @@
 from enum import Enum
 
+NS_V10 = "http://schemas.mandiant.com/2010/ioc"
 NS_V11 = "http://openioc.org/schemas/OpenIOC_1.1"
 
 

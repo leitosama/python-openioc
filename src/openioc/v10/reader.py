@@ -34,35 +34,12 @@ class IOCv10Reader:
 
     def _parse_ioc(self, el: etree._Element) -> IOC:
         ioc_id = el.get("id", "")
-        created_date = el.get("created-date", "")
-        last_modified = el.get("last-modified-date", "")
-        published_date = el.get("published-date", "")
+        # Real OpenIOC 1.0 uses "last-modified"; no created-date or published-date
+        last_modified = el.get("last-modified", "")
 
-        metadata = Metadata()
+        meta = Metadata()
         definition = None
 
-        for child in el:
-            local = etree.QName(child.tag).localname.lower()
-            if local == "metadata":
-                metadata = self._parse_metadata(child)
-            elif local == "definition":
-                definition = self._parse_definition(child)
-
-        if definition is None:
-            raise ParseError("Missing required <definition> element in IOC 1.0 document")
-
-        return IOC(
-            id=ioc_id,
-            metadata=metadata,
-            definition=definition,
-            created_date=created_date,
-            last_modified=last_modified,
-            published_date=published_date,
-            format_version="1.0",
-        )
-
-    def _parse_metadata(self, el: etree._Element) -> Metadata:
-        meta = Metadata()
         for child in el:
             local = etree.QName(child.tag).localname.lower()
             text = (child.text or "").strip()
@@ -78,7 +55,19 @@ class IOCv10Reader:
                 meta.authored_date = text
             elif local == "links":
                 meta.links = self._parse_links(child)
-        return meta
+            elif local == "definition":
+                definition = self._parse_definition(child)
+
+        if definition is None:
+            raise ParseError("Missing required <definition> element in IOC 1.0 document")
+
+        return IOC(
+            id=ioc_id,
+            metadata=meta,
+            definition=definition,
+            last_modified=last_modified,
+            format_version="1.0",
+        )
 
     def _parse_links(self, el: etree._Element) -> list[Link]:
         links = []
@@ -110,12 +99,11 @@ class IOCv10Reader:
         # wrap multiple top-level Indicators in a synthetic OR node
         import uuid
 
-        root = Indicator(
+        return Indicator(
             id=str(uuid.uuid4()),
             operator=IndicatorOperator.OR,
             children=list(indicators),
         )
-        return root
 
     def _parse_indicator(self, el: etree._Element) -> Indicator:
         op_str = el.get("operator", "OR").upper()
@@ -144,6 +132,7 @@ class IOCv10Reader:
 
         context = Context(document="", search="")
         content = Content(value="")
+        comment = ""
 
         for child in el:
             local = etree.QName(child.tag).localname.lower()
@@ -158,10 +147,13 @@ class IOCv10Reader:
                     value=(child.text or "").strip(),
                     content_type=child.get("type", "string"),
                 )
+            elif local == "comment":
+                comment = (child.text or "").strip()
 
         return IndicatorItem(
             id=item_id,
             context=context,
             content=content,
             condition=condition,
+            comment=comment,
         )

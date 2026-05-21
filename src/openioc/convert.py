@@ -16,8 +16,9 @@ def convert_10_to_11(ioc: IOC) -> IOC:
     result.format_version = "1.1"
 
     # map 1.0 date fields to 1.1 fields
+    # v1.0 only has last-modified; use it as fallback for published_date
     if not result.published_date:
-        result.published_date = result.created_date
+        result.published_date = result.created_date or result.last_modified
     if not result.last_modified:
         result.last_modified = result.created_date
 

@@ -50,8 +50,9 @@ def test_read_full_nested_structure(v10_full_ioc):
 
 
 def test_read_full_dates(v10_full_ioc):
-    assert v10_full_ioc.created_date == "2011-01-01T00:00:00"
+    # v1.0 only carries last-modified; no created-date in the spec
     assert v10_full_ioc.last_modified == "2011-06-01T00:00:00"
+    assert v10_full_ioc.created_date == ""
 
 
 def test_read_full_links(v10_full_ioc):
@@ -85,6 +86,15 @@ def test_malformed_raises_parse_error(v10_malformed_path):
 def test_version_detected_as_10(v10_minimal_path):
     ioc = openioc.read(v10_minimal_path)
     assert ioc.format_version == "1.0"
+
+
+def test_read_comment_in_indicator_item(v10_full_ioc):
+    root = v10_full_ioc.definition
+    and1 = root.children[0]
+    assert isinstance(and1, openioc.Indicator)
+    item_with_comment = and1.children[0]
+    assert isinstance(item_with_comment, openioc.IndicatorItem)
+    assert item_with_comment.comment == "Process name check"
 
 
 def test_wrong_root_raises_parse_error():

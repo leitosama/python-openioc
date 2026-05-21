@@ -55,8 +55,8 @@ def test_convert_maps_dates(v10_full_ioc):
 
 def test_convert_minimal_dates(v10_minimal_ioc):
     result = openioc.convert_10_to_11(v10_minimal_ioc)
-    # minimal fixture has created-date but no published-date
-    assert result.published_date == v10_minimal_ioc.created_date
+    # v1.0 only has last-modified; published_date should fall back to it
+    assert result.published_date == v10_minimal_ioc.last_modified
 
 
 def test_convert_isnot_to_negate(v10_full_ioc):

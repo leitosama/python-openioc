@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ioc id="33333333-3333-3333-3333-333333333333"
-     created-date="2011-01-01T00:00:00">
-  <metadata>
-    <short_description>Malformed - no definition</short_description>
-  </metadata>
+<ioc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     id="33333333-3333-3333-3333-333333333333"
+     last-modified="2011-01-01T00:00:00"
+     xmlns="http://schemas.mandiant.com/2010/ioc">
+  <short_description>Malformed - no definition</short_description>
 </ioc>

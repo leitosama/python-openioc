@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ioc id="11111111-1111-1111-1111-111111111111"
-     created-date="2011-01-01T00:00:00"
-     last-modified-date="2011-06-01T00:00:00">
-  <metadata>
-    <short_description>Minimal v1.0 IOC</short_description>
-    <authored_by>Test Author</authored_by>
-    <authored_date>2011-01-01T00:00:00</authored_date>
-  </metadata>
+<ioc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     id="11111111-1111-1111-1111-111111111111"
+     last-modified="2011-06-01T00:00:00"
+     xmlns="http://schemas.mandiant.com/2010/ioc">
+  <short_description>Minimal v1.0 IOC</short_description>
+  <authored_by>Test Author</authored_by>
+  <authored_date>2011-01-01T00:00:00</authored_date>
+  <links/>
   <definition>
     <Indicator operator="OR" id="aaaa0001-0000-0000-0000-000000000001">
-      <IndicatorItem condition="is">
+      <IndicatorItem id="bbbb0001-0000-0000-0000-000000000001" condition="is">
         <Context document="FileItem" search="FileItem/FileName" type="mir"/>
         <Content type="string">evil.exe</Content>
       </IndicatorItem>

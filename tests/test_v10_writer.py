@@ -7,6 +7,12 @@ import openioc
 from openioc.constants import IndicatorOperator
 from openioc.exceptions import WriteError
 
+NS = "http://schemas.mandiant.com/2010/ioc"
+
+
+def _tag(name: str) -> str:
+    return f"{{{NS}}}{name}"
+
 
 def test_write_returns_bytes(simple_ioc):
     simple_ioc.format_version = "1.0"
@@ -18,11 +24,12 @@ def test_write_returns_bytes(simple_ioc):
 def test_write_root_tag_is_ioc(simple_ioc):
     data = openioc.write(simple_ioc, version="1.0")
     root = etree.fromstring(data)
-    assert root.tag == "ioc"
+    assert etree.QName(root.tag).localname == "ioc"
 
 
-def test_write_no_namespace(simple_ioc):
+def test_write_mandiant_namespace(simple_ioc):
     data = openioc.write(simple_ioc, version="1.0")
+    assert b"schemas.mandiant.com/2010/ioc" in data
     assert b"openioc.org" not in data
 
 
@@ -30,6 +37,19 @@ def test_write_id_attribute(simple_ioc):
     data = openioc.write(simple_ioc, version="1.0")
     root = etree.fromstring(data)
     assert root.get("id") == simple_ioc.id
+
+
+def test_write_last_modified_attribute(v10_full_ioc):
+    data = openioc.write(v10_full_ioc, version="1.0")
+    root = etree.fromstring(data)
+    assert root.get("last-modified") == "2011-06-01T00:00:00"
+
+
+def test_write_no_created_date(simple_ioc):
+    simple_ioc.format_version = "1.0"
+    data = openioc.write(simple_ioc, version="1.0")
+    root = etree.fromstring(data)
+    assert root.get("created-date") is None
 
 
 def test_missing_id_auto_generated():
@@ -49,7 +69,7 @@ def test_missing_id_auto_generated():
     )
     data = openioc.write(ioc, version="1.0")
     root = etree.fromstring(data)
-    ii = root.find(".//IndicatorItem")
+    ii = root.find(f".//{_tag('IndicatorItem')}")
     assert ii is not None
     gen_id = ii.get("id")
     assert gen_id and gen_id != ""
@@ -94,7 +114,15 @@ def test_write_none_definition_raises():
 def test_write_metadata_fields(v10_full_ioc):
     xml_bytes = openioc.write(v10_full_ioc, version="1.0")
     root = etree.fromstring(xml_bytes)
-    meta = root.find("metadata")
-    assert meta is not None
-    sd = meta.find("short_description")
+    # Metadata fields are direct children of root — no <metadata> wrapper
+    sd = root.find(_tag("short_description"))
     assert sd is not None and sd.text == "Full v1.0 IOC"
+    desc = root.find(_tag("description"))
+    assert desc is not None and desc.text == "Tests all conditions and nested AND/OR logic"
+
+
+def test_write_comment_in_indicator_item(v10_full_ioc):
+    xml_bytes = openioc.write(v10_full_ioc, version="1.0")
+    root = etree.fromstring(xml_bytes)
+    comment = root.find(f".//{_tag('Comment')}")
+    assert comment is not None and comment.text == "Process name check"

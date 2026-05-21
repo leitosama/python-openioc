@@ -26,6 +26,7 @@ class IndicatorItem:
     condition: str = "is"
     negate: bool = False  # 1.1 only; v1.0 writer ignores this
     preserve_case: bool = False  # 1.1 only; v1.0 writer ignores this
+    comment: str = ""  # v1.0 <Comment>; v1.1 writer ignores this
 
 
 @dataclass
@@ -70,7 +71,7 @@ class IOC:
     metadata: Metadata = field(default_factory=Metadata)
     definition: Indicator | None = None
     parameters: list[Parameter] = field(default_factory=list)
-    created_date: str = ""  # 1.0: created-date; maps to published_date on convert
-    last_modified: str = ""  # 1.0: last-modified-date; 1.1: last-modified
+    created_date: str = ""  # not in v1.0 spec; used for v1.1 and conversion
+    last_modified: str = ""  # 1.0/1.1: last-modified attribute
     published_date: str = ""  # 1.1: published-date
     format_version: str = "1.1"

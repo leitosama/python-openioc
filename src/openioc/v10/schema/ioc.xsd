@@ -1,74 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  OpenIOC 1.0 schema for the python-openioc library format.
-  Adapted from the Mandiant ioc_writer reference schema; adjusted to match
-  the <metadata> wrapper and attribute names used by this library.
+  OpenIOC 1.0 schema — namespace-qualified format used by Mandiant/FireEye tooling.
+  Derived from the mandiant/ioc_writer reference schema; condition values are left
+  as xs:string (not enumerated) to match the original; validation of v1.0-specific
+  condition values is done programmatically in validator.py.
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://schemas.mandiant.com/2010/ioc"
+    xmlns:tns="http://schemas.mandiant.com/2010/ioc"
+    elementFormDefault="qualified">
 
-  <xs:element name="ioc" type="IndicatorOfCompromise"/>
+  <xs:element name="ioc" type="tns:IndicatorOfCompromise"/>
 
   <xs:complexType name="IndicatorOfCompromise">
     <xs:sequence>
-      <xs:element name="metadata" type="Metadata" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="definition" type="Definition" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="short_description" type="xs:string"  minOccurs="0" maxOccurs="1"/>
+      <xs:element name="description"       type="xs:string"  minOccurs="0" maxOccurs="1"/>
+      <xs:element name="keywords"          type="xs:string"  minOccurs="0" maxOccurs="1"/>
+      <xs:element name="authored_by"       type="xs:string"  minOccurs="0" maxOccurs="1"/>
+      <xs:element name="authored_date"     type="xs:string"  minOccurs="0" maxOccurs="1"/>
+      <xs:element name="links"             type="tns:Links"  minOccurs="0" maxOccurs="1"/>
+      <xs:element name="definition"        type="tns:Definition" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:string"/>
-    <xs:attribute name="created-date" type="xs:string"/>
-    <xs:attribute name="last-modified-date" type="xs:string"/>
-    <xs:attribute name="published-date" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="Metadata">
-    <xs:sequence>
-      <xs:element name="short_description" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="keywords" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="authored_by" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="authored_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="links" type="Links" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
+    <xs:attribute name="id"            type="xs:string"/>
+    <xs:attribute name="last-modified" type="xs:string"/>
+    <!-- absorb xmlns:xsi / xmlns:xsd declarations written by lxml -->
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
 
   <xs:complexType name="Links">
     <xs:sequence>
-      <xs:element name="link" type="Link" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="link" type="tns:Link" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="Link" mixed="true">
-    <xs:attribute name="rel" type="xs:string"/>
-    <xs:attribute name="href" type="xs:string"/>
+    <xs:attribute name="rel"   type="xs:string"/>
+    <xs:attribute name="href"  type="xs:string"/>
+    <xs:attribute name="title" type="xs:string"/>
+    <xs:attribute name="type"  type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="Definition">
     <xs:sequence>
-      <xs:element name="Indicator" type="IocIndicator" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Indicator" type="tns:IocIndicator" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="IocIndicator">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="IndicatorItem" type="IndicatorItem"/>
-      <xs:element name="Indicator" type="IocIndicator"/>
+      <xs:element name="IndicatorItem" type="tns:IndicatorItem"/>
+      <xs:element name="Indicator"     type="tns:IocIndicator"/>
     </xs:choice>
-    <xs:attribute name="operator" type="IocOperator" use="required"/>
-    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="operator" type="tns:IocOperator" use="required"/>
+    <xs:attribute name="id"       type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="IndicatorItem">
     <xs:sequence>
-      <xs:element name="Context" type="IndicatorItemContext" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Content" type="IndicatorItemContent" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Context" type="tns:IndicatorItemContext" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Content" type="tns:IndicatorItemContent" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Comment" type="xs:string"               minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:string"/>
-    <xs:attribute name="condition" type="Condition10"/>
+    <xs:attribute name="id"        type="xs:string"/>
+    <xs:attribute name="condition" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="IndicatorItemContext">
     <xs:attribute name="document" type="xs:string"/>
-    <xs:attribute name="search" type="xs:string"/>
-    <xs:attribute name="type" type="xs:string"/>
+    <xs:attribute name="search"   type="xs:string"/>
+    <xs:attribute name="type"     type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="IndicatorItemContent">
@@ -83,15 +85,6 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="OR"/>
       <xs:enumeration value="AND"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="Condition10">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="is"/>
-      <xs:enumeration value="isnot"/>
-      <xs:enumeration value="contains"/>
-      <xs:enumeration value="containsnot"/>
     </xs:restriction>
   </xs:simpleType>
 

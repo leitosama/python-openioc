@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ioc id="22222222-2222-2222-2222-222222222222"
-     created-date="2011-01-01T00:00:00"
-     last-modified-date="2011-06-01T00:00:00"
-     published-date="2011-06-01T00:00:00">
-  <metadata>
-    <short_description>Full v1.0 IOC</short_description>
-    <description>Tests all conditions and nested AND/OR logic</description>
-    <keywords>malware,zeus,banking</keywords>
-    <authored_by>Mandiant</authored_by>
-    <authored_date>2011-01-01T00:00:00</authored_date>
-    <links>
-      <link rel="reference" href="https://example.com">Zeus Analysis</link>
-      <link rel="case-id">CASE-001</link>
-    </links>
-  </metadata>
+<ioc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     id="22222222-2222-2222-2222-222222222222"
+     last-modified="2011-06-01T00:00:00"
+     xmlns="http://schemas.mandiant.com/2010/ioc">
+  <short_description>Full v1.0 IOC</short_description>
+  <description>Tests all conditions and nested AND/OR logic</description>
+  <keywords>malware,zeus,banking</keywords>
+  <authored_by>Mandiant</authored_by>
+  <authored_date>2011-01-01T00:00:00</authored_date>
+  <links>
+    <link rel="reference" href="https://example.com">Zeus Analysis</link>
+    <link rel="case-id">CASE-001</link>
+  </links>
   <definition>
     <Indicator operator="OR" id="aaaa0002-0000-0000-0000-000000000001">
       <Indicator operator="AND" id="aaaa0002-0000-0000-0000-000000000002">
         <IndicatorItem id="bbbb0002-0000-0000-0000-000000000001" condition="is">
           <Context document="ProcessItem" search="ProcessItem/name" type="mir"/>
           <Content type="string">svchost.exe</Content>
+          <Comment>Process name check</Comment>
         </IndicatorItem>
         <IndicatorItem id="bbbb0002-0000-0000-0000-000000000002" condition="contains">
           <Context document="ProcessItem" search="ProcessItem/HandleList/Handle/Name" type="mir"/>
