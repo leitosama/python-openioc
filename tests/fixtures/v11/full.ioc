@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OpenIOC xmlns="http://openioc.org/schemas/OpenIOC_1.1"
+         id="55555555-5555-5555-5555-555555555555"
+         last-modified="2013-06-01T00:00:00"
+         published-date="2013-01-01T00:00:00">
+  <metadata>
+    <short_description>Full v1.1 IOC</short_description>
+    <description>Tests all 1.1 features</description>
+    <keywords>malware,zeus</keywords>
+    <authored_by>Mandiant</authored_by>
+    <authored_date>2013-01-01T00:00:00</authored_date>
+    <links>
+      <link rel="reference" href="https://example.com">Zeus Reference</link>
+    </links>
+  </metadata>
+  <criteria>
+    <Indicator operator="OR" id="cccc0002-0000-0000-0000-000000000001">
+      <Indicator operator="AND" id="cccc0002-0000-0000-0000-000000000002">
+        <IndicatorItem id="dddd0002-0000-0000-0000-000000000001"
+                       condition="is"
+                       preserve-case="false"
+                       negate="false">
+          <Context document="FileItem" search="FileItem/Md5sum" type="mir"/>
+          <Content type="md5">d41d8cd98f00b204e9800998ecf8427e</Content>
+        </IndicatorItem>
+        <IndicatorItem id="dddd0002-0000-0000-0000-000000000002"
+                       condition="contains"
+                       preserve-case="true"
+                       negate="true">
+          <Context document="ProcessItem" search="ProcessItem/name" type="mir"/>
+          <Content type="string">EVIL</Content>
+        </IndicatorItem>
+      </Indicator>
+      <Indicator operator="AND" id="cccc0002-0000-0000-0000-000000000003">
+        <IndicatorItem id="dddd0002-0000-0000-0000-000000000003"
+                       condition="matches"
+                       preserve-case="false"
+                       negate="false">
+          <Context document="FileItem" search="FileItem/FullPath" type="mir"/>
+          <Content type="string">.*\\system32\\.*\.dll</Content>
+        </IndicatorItem>
+        <IndicatorItem id="dddd0002-0000-0000-0000-000000000004"
+                       condition="greater-than"
+                       preserve-case="false"
+                       negate="false">
+          <Context document="FileItem" search="FileItem/SizeInBytes" type="mir"/>
+          <Content type="integer">4096</Content>
+        </IndicatorItem>
+      </Indicator>
+    </Indicator>
+  </criteria>
+  <parameters>
+    <param id="eeee0002-0000-0000-0000-000000000001"
+           ref-id="dddd0002-0000-0000-0000-000000000001"
+           name="confidence">
+      <value type="string">high</value>
+    </param>
+    <param id="eeee0002-0000-0000-0000-000000000002"
+           ref-id="dddd0002-0000-0000-0000-000000000002"
+           name="data-marking">
+      <value type="string">TLP:AMBER</value>
+    </param>
+  </parameters>
+</OpenIOC>
