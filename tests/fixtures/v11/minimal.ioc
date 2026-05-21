@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OpenIOC xmlns="http://openioc.org/schemas/OpenIOC_1.1"
+         id="44444444-4444-4444-4444-444444444444"
+         last-modified="2013-01-01T00:00:00"
+         published-date="2013-01-01T00:00:00">
+  <metadata>
+    <short_description>Minimal v1.1 IOC</short_description>
+    <authored_by>Test Author</authored_by>
+    <authored_date>2013-01-01T00:00:00</authored_date>
+  </metadata>
+  <criteria>
+    <Indicator operator="OR" id="cccc0001-0000-0000-0000-000000000001">
+      <IndicatorItem id="dddd0001-0000-0000-0000-000000000001"
+                     condition="is"
+                     preserve-case="false"
+                     negate="false">
+        <Context document="FileItem" search="FileItem/FileName" type="mir"/>
+        <Content type="string">evil.exe</Content>
+      </IndicatorItem>
+    </Indicator>
+  </criteria>
+</OpenIOC>

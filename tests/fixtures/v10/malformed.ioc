@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ioc id="33333333-3333-3333-3333-333333333333"
+     created-date="2011-01-01T00:00:00">
+  <metadata>
+    <short_description>Malformed - no definition</short_description>
+  </metadata>
+</ioc>

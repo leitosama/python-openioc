@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OpenIOC xmlns="http://openioc.org/schemas/OpenIOC_1.1"
+         id="66666666-6666-6666-6666-666666666666"
+         last-modified="2013-01-01T00:00:00"
+         published-date="2013-01-01T00:00:00">
+  <metadata>
+    <short_description>Malformed - no criteria</short_description>
+    <authored_date>2013-01-01T00:00:00</authored_date>
+  </metadata>
+</OpenIOC>
