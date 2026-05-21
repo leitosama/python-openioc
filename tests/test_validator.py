@@ -56,7 +56,7 @@ def test_validate_10_invalid_condition():
     )
     with pytest.raises(ValidationError) as exc_info:
         openioc.validate_10(ioc)
-    assert len(exc_info.value.errors) >= 1
+    assert len(exc_info.value.errors) == 1
 
 
 def test_validate_10_missing_context_document():
@@ -100,7 +100,8 @@ def test_validate_10_raises_on_bad_input():
     )
     with pytest.raises(ValidationError) as exc_info:
         openioc.validate_10(ioc)
-    assert len(exc_info.value.errors) >= 1
+    # missing id is caught by the pre-check; XSD/condition errors don't accumulate
+    assert len(exc_info.value.errors) == 1
 
 
 def test_validate_10_source_format():

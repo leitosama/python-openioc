@@ -1,7 +1,20 @@
-"""python-openioc: Full CRUD support for OpenIOC 1.0 and 1.1."""
+"""python-openioc: Full CRUD support for OpenIOC 1.0 and 1.1.
+
+This module re-exports the public API of the library:
+
+* Data model: :class:`IOC`, :class:`Indicator`, :class:`IndicatorItem`,
+  :class:`Context`, :class:`Content`, :class:`Metadata`, :class:`Link`,
+  :class:`Parameter`.
+* Enums: :class:`IndicatorOperator`, :class:`Condition10`, :class:`Condition11`.
+* Exceptions: :class:`OpenIOCError` (base), :class:`ParseError`,
+  :class:`ValidationError`, :class:`ConversionError`, :class:`WriteError`.
+* Functions: :func:`read`, :func:`write`, :func:`convert_10_to_11`,
+  :func:`validate`, :func:`validate_10`, :func:`validate_11`.
+"""
 
 from __future__ import annotations
 
+import io
 import os
 
 from lxml import etree
@@ -56,10 +69,28 @@ def read(
     *,
     version: str | None = None,
 ) -> IOC:
-    """Parse an OpenIOC document.
+    """Parse an OpenIOC document into an :class:`IOC` object.
 
-    Auto-detects the version from the root element unless *version* is given.
-    Accepts a file path, an XML string, or raw bytes.
+    When ``version`` is left as ``None``, the format is auto-detected by
+    peeking at the root element of the document: a ``<OpenIOC>`` root
+    is parsed as 1.1, anything else is parsed as 1.0.
+
+    Args:
+        source: Path to a file, an XML string (must start with ``<``
+            after leading whitespace), or raw XML bytes. ``os.PathLike``
+            instances are always treated as file paths.
+        version: ``"1.0"`` or ``"1.1"`` to force a parser; ``None`` to
+            auto-detect.
+
+    Returns:
+        Parsed :class:`IOC`. The returned object's ``format_version``
+        attribute reflects which parser actually ran.
+
+    Raises:
+        ParseError: If the XML is malformed, the root element is
+            unexpected for the chosen version, or a required element is
+            missing.
+        OSError: If ``source`` is a file path that cannot be opened.
     """
     if version == "1.0":
         return _read_v10(source)
@@ -80,11 +111,25 @@ def write(
     version: str | None = None,
     pretty_print: bool = True,
 ) -> bytes | None:
-    """Serialise an IOC to XML.
+    """Serialise an :class:`IOC` to OpenIOC XML.
 
-    If *dest* is None, returns bytes.
-    If *dest* is a path, writes to file and returns None.
-    *version* overrides ``ioc.format_version``.
+    Args:
+        ioc: The IOC to serialise. Must have ``definition`` set.
+        dest: Output file path, or ``None`` to return the XML as bytes.
+        version: ``"1.0"`` or ``"1.1"`` to override ``ioc.format_version``.
+            Any other value behaves like ``"1.1"``.
+        pretty_print: If ``True``, the output is indented for human
+            readability.
+
+    Returns:
+        UTF-8 XML bytes (including the XML declaration) when ``dest is
+        None``; otherwise ``None`` after the file has been written.
+
+    Raises:
+        WriteError: If the IOC lacks required fields for the target
+            format (for example a missing ``id`` on an ``Indicator`` in
+            1.1, or a missing date on the root document in 1.1).
+        OSError: If ``dest`` cannot be written.
     """
     target = version or ioc.format_version
     if dest is None:
@@ -112,15 +157,30 @@ def write(
 
 
 def _detect_version(source: str | bytes | os.PathLike) -> str:
-    """Return '1.0' or '1.1' by peeking at the root element."""
+    """Detect the OpenIOC format version of ``source``.
+
+    Uses :func:`lxml.etree.iterparse` so only the root element is
+    consumed; the rest of the document is not loaded. The detection
+    rule is simple:
+
+    * ``<OpenIOC>`` root -> ``"1.1"``
+    * any other root (in practice ``<ioc>``) -> ``"1.0"``
+
+    Args:
+        source: Same shape as for :func:`read`.
+
+    Returns:
+        ``"1.0"`` or ``"1.1"``. Defaults to ``"1.1"`` for an empty
+        document (no root element seen).
+    """
     if isinstance(source, os.PathLike) or (
         isinstance(source, str) and not source.lstrip().startswith("<")
     ):
         # treat as file path
-        ctx = etree.iterparse(str(source), events=("start",))
+        ctx = etree.iterparse(str(source), events=("start",), resolve_entities=False)
     else:
         raw = source if isinstance(source, bytes) else source.encode()
-        ctx = etree.iterparse(__import__("io").BytesIO(raw), events=("start",))
+        ctx = etree.iterparse(io.BytesIO(raw), events=("start",), resolve_entities=False)
 
     for _event, elem in ctx:
         local = etree.QName(elem.tag).localname
