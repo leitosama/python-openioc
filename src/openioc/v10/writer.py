@@ -86,7 +86,8 @@ class IOCv10Writer:
 
     def _build_indicator_item(self, item: IndicatorItem) -> etree._Element:
         el = etree.Element(self._tag("IndicatorItem"))
-        el.set("id", self._ensure_id(item.id))
+        if item.id:
+            el.set("id", item.id)
         el.set("condition", item.condition)
 
         ctx = etree.SubElement(el, self._tag("Context"))

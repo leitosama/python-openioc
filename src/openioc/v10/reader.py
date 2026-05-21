@@ -41,6 +41,8 @@ class IOCv10Reader:
         definition = None
 
         for child in el:
+            if not isinstance(child.tag, str):  # skip XML comments / PIs
+                continue
             local = etree.QName(child.tag).localname.lower()
             text = (child.text or "").strip()
             if local == "short_description":
@@ -72,6 +74,8 @@ class IOCv10Reader:
     def _parse_links(self, el: etree._Element) -> list[Link]:
         links = []
         for child in el:
+            if not isinstance(child.tag, str):
+                continue
             local = etree.QName(child.tag).localname.lower()
             if local == "link":
                 links.append(
@@ -86,6 +90,8 @@ class IOCv10Reader:
     def _parse_definition(self, el: etree._Element) -> Indicator:
         indicators = []
         for child in el:
+            if not isinstance(child.tag, str):
+                continue
             local = etree.QName(child.tag).localname.lower()
             if local == "indicator":
                 indicators.append(self._parse_indicator(child))
@@ -118,6 +124,8 @@ class IOCv10Reader:
         )
 
         for child in el:
+            if not isinstance(child.tag, str):
+                continue
             local = etree.QName(child.tag).localname.lower()
             if local == "indicator":
                 indicator.children.append(self._parse_indicator(child))
@@ -135,6 +143,8 @@ class IOCv10Reader:
         comment = ""
 
         for child in el:
+            if not isinstance(child.tag, str):
+                continue
             local = etree.QName(child.tag).localname.lower()
             if local == "context":
                 context = Context(

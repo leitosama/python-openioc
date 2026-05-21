@@ -52,7 +52,8 @@ def test_write_no_created_date(simple_ioc):
     assert root.get("created-date") is None
 
 
-def test_missing_id_auto_generated():
+def test_empty_item_id_preserved():
+    # Items with empty id survive round-trip with no id attribute written
     item = openioc.IndicatorItem(
         id="",
         context=openioc.Context("FileItem", "FileItem/FileName"),
@@ -71,8 +72,7 @@ def test_missing_id_auto_generated():
     root = etree.fromstring(data)
     ii = root.find(f".//{_tag('IndicatorItem')}")
     assert ii is not None
-    gen_id = ii.get("id")
-    assert gen_id and gen_id != ""
+    assert ii.get("id") is None  # omitted, not auto-generated
 
 
 def test_round_trip_v10(v10_minimal_path):
