@@ -33,8 +33,22 @@ class IOCv11Writer:
     def write_element(self, ioc: IOC) -> etree._Element:
         root = etree.Element(self._tag("OpenIOC"), nsmap=self.NSMAP)  # type: ignore
         root.set("id", self._require_id(ioc.id, "IOC.id"))
-        root.set("last-modified", ioc.last_modified or ioc.created_date or "")
-        root.set("published-date", ioc.published_date or ioc.created_date or "")
+
+        # OpenIOC 1.1 XSD declares last-modified/published-date as xs:dateTime,
+        # so emitting empty strings produces a document that fails validation.
+        # Prefer created_date as a fallback; raise if neither is populated.
+        last_modified = ioc.last_modified or ioc.created_date
+        if not last_modified:
+            raise WriteError(
+                "IOC.last_modified or IOC.created_date is required for v1.1 serialization"
+            )
+        published_date = ioc.published_date or ioc.created_date
+        if not published_date:
+            raise WriteError(
+                "IOC.published_date or IOC.created_date is required for v1.1 serialization"
+            )
+        root.set("last-modified", last_modified)
+        root.set("published-date", published_date)
 
         root.append(self._build_metadata(ioc.metadata))
 
