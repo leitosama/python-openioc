@@ -21,6 +21,7 @@ def _all_items(node):
 # Reading — metadata
 # ---------------------------------------------------------------------------
 
+
 def test_windigo_id(windigo_ioc):
     assert windigo_ioc.id == "ec3b97c8-5de7-444d-9bd9-8f868ca04748"
 
@@ -52,6 +53,7 @@ def test_windigo_description_contains_report_url(windigo_ioc):
 # ---------------------------------------------------------------------------
 # Reading — indicator tree
 # ---------------------------------------------------------------------------
+
 
 def test_windigo_definition_not_none(windigo_ioc):
     assert windigo_ioc.definition is not None
@@ -90,6 +92,7 @@ def test_windigo_has_domain_indicator(windigo_ioc):
 # Modifying
 # ---------------------------------------------------------------------------
 
+
 def test_windigo_modify_description(windigo_ioc):
     original_count = len(_all_items(windigo_ioc.definition))
     windigo_ioc.metadata.short_description = "Updated"
@@ -113,6 +116,7 @@ def test_windigo_add_indicator_item(windigo_ioc):
 # ---------------------------------------------------------------------------
 # Writing to v1.0
 # ---------------------------------------------------------------------------
+
 
 def test_windigo_write_v10_returns_bytes(windigo_ioc):
     data = openioc.write(windigo_ioc, version="1.0")
@@ -164,6 +168,7 @@ def test_windigo_modified_round_trip_v10(windigo_ioc):
 # ---------------------------------------------------------------------------
 # Converting to v1.1
 # ---------------------------------------------------------------------------
+
 
 def test_windigo_convert_format_version(windigo_ioc):
     result = openioc.convert_10_to_11(windigo_ioc)

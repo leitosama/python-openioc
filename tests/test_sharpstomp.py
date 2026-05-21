@@ -21,6 +21,7 @@ def _all_items(node):
 # Reading — metadata
 # ---------------------------------------------------------------------------
 
+
 def test_sharpstomp_id(sharpstomp_ioc):
     assert sharpstomp_ioc.id == "7631f336-9f6d-4ca5-ad6a-def36d3ed327"
 
@@ -56,6 +57,7 @@ def test_sharpstomp_empty_links(sharpstomp_ioc):
 # ---------------------------------------------------------------------------
 # Reading — indicator tree structure (exact positions known from source XML)
 # ---------------------------------------------------------------------------
+
 
 def test_sharpstomp_root_operator_or(sharpstomp_ioc):
     assert sharpstomp_ioc.definition.operator == IndicatorOperator.OR
@@ -147,7 +149,8 @@ def test_sharpstomp_starts_with_preserve_case(sharpstomp_ioc):
 
 def test_sharpstomp_nested_and_operators(sharpstomp_ioc):
     and_nodes = [
-        c for c in sharpstomp_ioc.definition.children
+        c
+        for c in sharpstomp_ioc.definition.children
         if isinstance(c, openioc.Indicator) and c.operator == IndicatorOperator.AND
     ]
     assert len(and_nodes) == 2
@@ -156,6 +159,7 @@ def test_sharpstomp_nested_and_operators(sharpstomp_ioc):
 # ---------------------------------------------------------------------------
 # Modifying
 # ---------------------------------------------------------------------------
+
 
 def test_sharpstomp_modify_description(sharpstomp_ioc):
     sharpstomp_ioc.metadata.short_description = "Modified"
@@ -184,6 +188,7 @@ def test_sharpstomp_add_indicator_item(sharpstomp_ioc):
 # ---------------------------------------------------------------------------
 # Writing to v1.1
 # ---------------------------------------------------------------------------
+
 
 def test_sharpstomp_write_v11_returns_bytes(sharpstomp_ioc):
     data = openioc.write(sharpstomp_ioc)
