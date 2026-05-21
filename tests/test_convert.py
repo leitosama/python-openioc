@@ -1,10 +1,5 @@
-import copy
-
-import pytest
-
 import openioc
 from openioc.convert import _convert_condition
-from openioc.exceptions import ConversionError
 
 
 def test_condition_mapping_is():
@@ -93,7 +88,6 @@ def test_convert_adds_preserve_case(v10_full_ioc):
 
 
 def test_convert_generates_missing_ids():
-    import uuid
     ioc = openioc.IOC(
         id="",
         definition=openioc.Indicator(

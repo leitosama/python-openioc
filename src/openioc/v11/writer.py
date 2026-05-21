@@ -1,24 +1,22 @@
 from __future__ import annotations
 
 import os
-import uuid
-from typing import Union
 
 from lxml import etree
 
 from ..constants import NS_V11
 from ..exceptions import WriteError
-from ..models import Content, Context, IOC, Indicator, IndicatorItem, Link, Metadata, Parameter
+from ..models import IOC, Indicator, IndicatorItem, Link, Metadata, Parameter
 
 
 class IOCv11Writer:
     NAMESPACE = NS_V11
-    NSMAP = {None: NS_V11}
+    NSMAP: dict[str | None, str] = {None: NS_V11}
 
     def write_file(
         self,
         ioc: IOC,
-        path: Union[str, os.PathLike],
+        path: str | os.PathLike,
         *,
         pretty_print: bool = True,
     ) -> None:
@@ -29,14 +27,11 @@ class IOCv11Writer:
     def write_string(self, ioc: IOC, *, pretty_print: bool = True) -> bytes:
         root = self.write_element(ioc)
         return etree.tostring(
-            root,
-            pretty_print=pretty_print,
-            xml_declaration=True,
-            encoding="utf-8",
+            root, pretty_print=pretty_print, xml_declaration=True, encoding="utf-8"
         )
 
     def write_element(self, ioc: IOC) -> etree._Element:
-        root = etree.Element(self._tag("OpenIOC"), nsmap=self.NSMAP)
+        root = etree.Element(self._tag("OpenIOC"), nsmap=self.NSMAP)  # type: ignore
         root.set("id", self._require_id(ioc.id, "IOC.id"))
         root.set("last-modified", ioc.last_modified or ioc.created_date or "")
         root.set("published-date", ioc.published_date or ioc.created_date or "")

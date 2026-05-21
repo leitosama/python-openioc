@@ -3,17 +3,16 @@
 from __future__ import annotations
 
 import os
-from typing import Union
 
 from lxml import etree
 
-from .constants import NS_V11, Condition10, Condition11, IndicatorOperator
+from .constants import Condition10, Condition11, IndicatorOperator
 from .convert import convert_10_to_11
 from .exceptions import ConversionError, OpenIOCError, ParseError, ValidationError, WriteError
 from .models import (
+    IOC,
     Content,
     Context,
-    IOC,
     Indicator,
     IndicatorItem,
     Link,
@@ -53,7 +52,7 @@ __all__ = [
 
 
 def read(
-    source: Union[str, bytes, os.PathLike],
+    source: str | bytes | os.PathLike,
     *,
     version: str | None = None,
 ) -> IOC:
@@ -76,7 +75,7 @@ def read(
 
 def write(
     ioc: IOC,
-    dest: Union[str, os.PathLike, None] = None,
+    dest: str | os.PathLike | None = None,
     *,
     version: str | None = None,
     pretty_print: bool = True,
@@ -88,16 +87,22 @@ def write(
     *version* overrides ``ioc.format_version``.
     """
     target = version or ioc.format_version
+    if dest is None:
+        if target == "1.0":
+            from .v10.writer import IOCv10Writer
+
+            return IOCv10Writer().write_string(ioc, pretty_print=pretty_print)
+        from .v11.writer import IOCv11Writer
+
+        return IOCv11Writer().write_string(ioc, pretty_print=pretty_print)
     if target == "1.0":
         from .v10.writer import IOCv10Writer
-        writer = IOCv10Writer()
+
+        IOCv10Writer().write_file(ioc, dest, pretty_print=pretty_print)
     else:
         from .v11.writer import IOCv11Writer
-        writer = IOCv11Writer()
 
-    if dest is None:
-        return writer.write_string(ioc, pretty_print=pretty_print)
-    writer.write_file(ioc, dest, pretty_print=pretty_print)
+        IOCv11Writer().write_file(ioc, dest, pretty_print=pretty_print)
     return None
 
 
@@ -105,7 +110,8 @@ def write(
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _detect_version(source: Union[str, bytes, os.PathLike]) -> str:
+
+def _detect_version(source: str | bytes | os.PathLike) -> str:
     """Return '1.0' or '1.1' by peeking at the root element."""
     if isinstance(source, os.PathLike) or (
         isinstance(source, str) and not source.lstrip().startswith("<")
@@ -114,9 +120,7 @@ def _detect_version(source: Union[str, bytes, os.PathLike]) -> str:
         ctx = etree.iterparse(str(source), events=("start",))
     else:
         raw = source if isinstance(source, bytes) else source.encode()
-        ctx = etree.iterparse(
-            __import__("io").BytesIO(raw), events=("start",)
-        )
+        ctx = etree.iterparse(__import__("io").BytesIO(raw), events=("start",))
 
     for _event, elem in ctx:
         local = etree.QName(elem.tag).localname
@@ -127,23 +131,25 @@ def _detect_version(source: Union[str, bytes, os.PathLike]) -> str:
     return "1.1"
 
 
-def _read_v10(source: Union[str, bytes, os.PathLike]) -> IOC:
+def _read_v10(source: str | bytes | os.PathLike) -> IOC:
     from .v10.reader import IOCv10Reader
+
     reader = IOCv10Reader()
     if _is_file(source):
         return reader.read_file(source)  # type: ignore[arg-type]
     return reader.read_string(source)  # type: ignore[arg-type]
 
 
-def _read_v11(source: Union[str, bytes, os.PathLike]) -> IOC:
+def _read_v11(source: str | bytes | os.PathLike) -> IOC:
     from .v11.reader import IOCv11Reader
+
     reader = IOCv11Reader()
     if _is_file(source):
         return reader.read_file(source)  # type: ignore[arg-type]
     return reader.read_string(source)  # type: ignore[arg-type]
 
 
-def _is_file(source: Union[str, bytes, os.PathLike]) -> bool:
+def _is_file(source: str | bytes | os.PathLike) -> bool:
     if isinstance(source, bytes):
         return False
     s = str(source)

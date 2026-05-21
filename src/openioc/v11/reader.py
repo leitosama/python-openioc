@@ -1,26 +1,25 @@
 from __future__ import annotations
 
 import os
-from typing import Union
 
 from lxml import etree
 
 from ..constants import NS_V11, IndicatorOperator
 from ..exceptions import ParseError
-from ..models import Content, Context, IOC, Indicator, IndicatorItem, Link, Metadata, Parameter
+from ..models import IOC, Content, Context, Indicator, IndicatorItem, Link, Metadata, Parameter
 
 
 class IOCv11Reader:
     NAMESPACE = NS_V11
 
-    def read_file(self, path: Union[str, os.PathLike]) -> IOC:
+    def read_file(self, path: str | os.PathLike) -> IOC:
         try:
             tree = etree.parse(str(path))
         except etree.XMLSyntaxError as exc:
             raise ParseError(f"Malformed XML in {path}: {exc}") from exc
         return self.read_element(tree.getroot())
 
-    def read_string(self, src: Union[str, bytes]) -> IOC:
+    def read_string(self, src: str | bytes) -> IOC:
         if isinstance(src, str):
             src = src.encode()
         try:
@@ -113,6 +112,7 @@ class IOCv11Reader:
         if len(indicators) == 1:
             return indicators[0]
         import uuid
+
         return Indicator(
             id=str(uuid.uuid4()),
             operator=IndicatorOperator.OR,

@@ -5,7 +5,7 @@ import importlib.resources
 
 from lxml import etree
 
-from .constants import CONDITION10_VALUES, CONDITION11_VALUES
+from .constants import CONDITION10_VALUES
 from .exceptions import ValidationError
 from .models import IOC, Indicator, IndicatorItem
 
@@ -33,8 +33,8 @@ def validate_10(ioc: IOC) -> None:
 
 
 def validate_11(ioc: IOC) -> None:
-    from .v11.writer import IOCv11Writer
     from .exceptions import WriteError
+    from .v11.writer import IOCv11Writer
 
     errors: list[str] = []
 
@@ -54,8 +54,7 @@ def validate_11(ioc: IOC) -> None:
 
     schema = _load_schema_11()
     if not schema.validate(element):
-        schema_errors = [str(e) for e in schema.error_log.filter_from_errors()]
-        raise ValidationError(schema_errors, source_format="1.1")
+        raise ValidationError([str(schema.error_log)], source_format="1.1")
 
 
 @functools.lru_cache(maxsize=1)

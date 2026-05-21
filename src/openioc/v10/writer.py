@@ -2,19 +2,18 @@ from __future__ import annotations
 
 import os
 import uuid
-from typing import Union
 
 from lxml import etree
 
-from ..models import Content, Context, IOC, Indicator, IndicatorItem, Link, Metadata, Parameter
 from ..exceptions import WriteError
+from ..models import IOC, Indicator, IndicatorItem, Link, Metadata
 
 
 class IOCv10Writer:
     def write_file(
         self,
         ioc: IOC,
-        path: Union[str, os.PathLike],
+        path: str | os.PathLike,
         *,
         pretty_print: bool = True,
     ) -> None:
@@ -25,10 +24,7 @@ class IOCv10Writer:
     def write_string(self, ioc: IOC, *, pretty_print: bool = True) -> bytes:
         root = self.write_element(ioc)
         return etree.tostring(
-            root,
-            pretty_print=pretty_print,
-            xml_declaration=True,
-            encoding="utf-8",
+            root, pretty_print=pretty_print, xml_declaration=True, encoding="utf-8"
         )
 
     def write_element(self, ioc: IOC) -> etree._Element:

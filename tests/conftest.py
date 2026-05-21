@@ -61,6 +61,7 @@ def v11_full_ioc(v11_full_path) -> openioc.IOC:
 def simple_ioc() -> openioc.IOC:
     """Minimal programmatically-built v1.1 IOC."""
     import uuid
+
     return openioc.IOC(
         id=str(uuid.uuid4()),
         metadata=openioc.Metadata(

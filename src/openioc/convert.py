@@ -3,8 +3,8 @@ from __future__ import annotations
 import copy
 import uuid
 
-from .models import IOC, Indicator, IndicatorItem
 from .exceptions import ConversionError
+from .models import IOC, Indicator, IndicatorItem
 
 
 def convert_10_to_11(ioc: IOC) -> IOC:
@@ -36,7 +36,7 @@ def _convert_indicator(indicator: Indicator) -> Indicator:
     if not indicator.id:
         indicator.id = str(uuid.uuid4())
 
-    new_children = []
+    new_children: list[Indicator | IndicatorItem] = []
     for child in indicator.children:
         if isinstance(child, Indicator):
             new_children.append(_convert_indicator(child))

@@ -6,7 +6,6 @@ from lxml import etree
 import openioc
 from openioc.constants import IndicatorOperator
 from openioc.exceptions import WriteError
-from openioc.v10.writer import IOCv10Writer
 
 
 def test_write_returns_bytes(simple_ioc):

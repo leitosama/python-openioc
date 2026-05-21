@@ -5,8 +5,8 @@ import pytest
 import openioc
 from openioc.exceptions import ValidationError
 
-
 # ── v1.0 validation ───────────────────────────────────────────────────────────
+
 
 def test_validate_10_passes_on_valid(v10_full_ioc):
     openioc.validate_10(v10_full_ioc)  # should not raise
@@ -111,6 +111,7 @@ def test_validate_10_source_format():
 
 # ── v1.1 validation ───────────────────────────────────────────────────────────
 
+
 def test_validate_11_passes_on_valid(simple_ioc):
     openioc.validate_11(simple_ioc)
 
@@ -138,6 +139,7 @@ def test_validate_11_source_format(simple_ioc):
 
 
 # ── dispatch ──────────────────────────────────────────────────────────────────
+
 
 def test_validate_dispatches_10(v10_full_ioc):
     openioc.validate(v10_full_ioc)  # should not raise
