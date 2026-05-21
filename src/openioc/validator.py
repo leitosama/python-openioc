@@ -31,9 +31,12 @@ def validate_10(ioc: IOC) -> None:
     if errors:
         raise ValidationError(errors, source_format="1.0")
 
+    # narrowed: pre-check above guarantees definition is not None
+    assert ioc.definition is not None
+
     # XSD leaves condition as xs:string; check v1.0 values programmatically
     condition_errors: list[str] = []
-    _check_conditions_10(ioc.definition, condition_errors)  # type: ignore[arg-type]
+    _check_conditions_10(ioc.definition, condition_errors)
     if condition_errors:
         raise ValidationError(condition_errors, source_format="1.0")
 
