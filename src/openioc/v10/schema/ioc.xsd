@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  OpenIOC 1.0 schema for the python-openioc library format.
+  Adapted from the Mandiant ioc_writer reference schema; adjusted to match
+  the <metadata> wrapper and attribute names used by this library.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="ioc" type="IndicatorOfCompromise"/>
+
+  <xs:complexType name="IndicatorOfCompromise">
+    <xs:sequence>
+      <xs:element name="metadata" type="Metadata" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="definition" type="Definition" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="created-date" type="xs:string"/>
+    <xs:attribute name="last-modified-date" type="xs:string"/>
+    <xs:attribute name="published-date" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="Metadata">
+    <xs:sequence>
+      <xs:element name="short_description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="keywords" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="authored_by" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="authored_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="links" type="Links" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Links">
+    <xs:sequence>
+      <xs:element name="link" type="Link" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Link" mixed="true">
+    <xs:attribute name="rel" type="xs:string"/>
+    <xs:attribute name="href" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="Definition">
+    <xs:sequence>
+      <xs:element name="Indicator" type="IocIndicator" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IocIndicator">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="IndicatorItem" type="IndicatorItem"/>
+      <xs:element name="Indicator" type="IocIndicator"/>
+    </xs:choice>
+    <xs:attribute name="operator" type="IocOperator" use="required"/>
+    <xs:attribute name="id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="IndicatorItem">
+    <xs:sequence>
+      <xs:element name="Context" type="IndicatorItemContext" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Content" type="IndicatorItemContent" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="condition" type="Condition10"/>
+  </xs:complexType>
+
+  <xs:complexType name="IndicatorItemContext">
+    <xs:attribute name="document" type="xs:string"/>
+    <xs:attribute name="search" type="xs:string"/>
+    <xs:attribute name="type" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="IndicatorItemContent">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="type" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="IocOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OR"/>
+      <xs:enumeration value="AND"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Condition10">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="is"/>
+      <xs:enumeration value="isnot"/>
+      <xs:enumeration value="contains"/>
+      <xs:enumeration value="containsnot"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

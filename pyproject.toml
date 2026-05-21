@@ -27,6 +27,7 @@ packages = ["src/openioc"]
 [tool.hatch.build]
 include = [
     "src/openioc/**/*.py",
+    "src/openioc/v10/schema/*.xsd",
     "src/openioc/v11/schema/*.xsd",
 ]
 
