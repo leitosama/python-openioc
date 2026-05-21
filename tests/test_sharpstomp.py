@@ -1,8 +1,9 @@
 """Tests for the real-world SHARPSTOMP (UTILITY) OpenIOC 1.1 fixture."""
 
-import openioc
-from openioc.constants import IndicatorOperator, NS_V11
 from lxml import etree
+
+import openioc
+from openioc.constants import NS_V11, IndicatorOperator
 
 
 def _all_items(node):

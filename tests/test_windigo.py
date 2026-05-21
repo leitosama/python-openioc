@@ -1,8 +1,9 @@
 """Tests for the real-world Operation Windigo OpenIOC 1.0 fixture."""
 
+from lxml import etree
+
 import openioc
 from openioc.constants import IndicatorOperator
-from lxml import etree
 
 
 def _all_items(node):
