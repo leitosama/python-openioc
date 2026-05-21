@@ -58,6 +58,26 @@ def v11_full_ioc(v11_full_path) -> openioc.IOC:
 
 
 @pytest.fixture
+def windigo_path() -> Path:
+    return FIXTURES / "v10" / "windigo.ioc"
+
+
+@pytest.fixture
+def windigo_ioc(windigo_path) -> openioc.IOC:
+    return openioc.read(windigo_path)
+
+
+@pytest.fixture
+def sharpstomp_path() -> Path:
+    return FIXTURES / "v11" / "sharpstomp.ioc"
+
+
+@pytest.fixture
+def sharpstomp_ioc(sharpstomp_path) -> openioc.IOC:
+    return openioc.read(sharpstomp_path)
+
+
+@pytest.fixture
 def simple_ioc() -> openioc.IOC:
     """Minimal programmatically-built v1.1 IOC."""
     import uuid
