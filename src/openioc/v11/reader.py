@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import uuid
 
 from lxml import etree
 
@@ -8,13 +9,17 @@ from ..constants import NS_V11, IndicatorOperator
 from ..exceptions import ParseError
 from ..models import IOC, Content, Context, Indicator, IndicatorItem, Link, Metadata, Parameter
 
+# Hardened parser: disable external-entity resolution, network access, and huge-tree
+# expansion to mitigate XXE and billion-laughs attacks against untrusted OpenIOC input.
+_PARSER = etree.XMLParser(resolve_entities=False, no_network=True, huge_tree=False)
+
 
 class IOCv11Reader:
     NAMESPACE = NS_V11
 
     def read_file(self, path: str | os.PathLike) -> IOC:
         try:
-            tree = etree.parse(str(path))
+            tree = etree.parse(str(path), _PARSER)
         except etree.XMLSyntaxError as exc:
             raise ParseError(f"Malformed XML in {path}: {exc}") from exc
         return self.read_element(tree.getroot())
@@ -23,7 +28,7 @@ class IOCv11Reader:
         if isinstance(src, str):
             src = src.encode()
         try:
-            root = etree.fromstring(src)
+            root = etree.fromstring(src, _PARSER)
         except etree.XMLSyntaxError as exc:
             raise ParseError(f"Malformed XML: {exc}") from exc
         return self.read_element(root)
@@ -111,8 +116,6 @@ class IOCv11Reader:
             raise ParseError("Empty <criteria>: must contain at least one <Indicator>")
         if len(indicators) == 1:
             return indicators[0]
-        import uuid
-
         return Indicator(
             id=str(uuid.uuid4()),
             operator=IndicatorOperator.OR,

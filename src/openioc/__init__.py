@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import os
 
 from lxml import etree
@@ -117,10 +118,10 @@ def _detect_version(source: str | bytes | os.PathLike) -> str:
         isinstance(source, str) and not source.lstrip().startswith("<")
     ):
         # treat as file path
-        ctx = etree.iterparse(str(source), events=("start",))
+        ctx = etree.iterparse(str(source), events=("start",), resolve_entities=False)
     else:
         raw = source if isinstance(source, bytes) else source.encode()
-        ctx = etree.iterparse(__import__("io").BytesIO(raw), events=("start",))
+        ctx = etree.iterparse(io.BytesIO(raw), events=("start",), resolve_entities=False)
 
     for _event, elem in ctx:
         local = etree.QName(elem.tag).localname
