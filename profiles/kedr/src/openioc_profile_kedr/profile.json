@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "name": "kedr",
+  "profile_version": "0.1.0",
+  "target_product": "Kaspersky Anti Targeted Attack — KEDR",
+  "target_versions": ["5.x", "6.x"],
+  "description": "Consumer profile for KATA KEDR. Describes the OpenIOC terms, operators, and structural constraints supported by the KEDR endpoint detection and response component. NOTE: this is a work-in-progress stub; the full list of supported terms will be added once the official documentation is available. See docs/profiles/kedr.md for status.",
+  "source": "",
+  "terms": {
+    "FileItem/FileName": {
+      "operators": ["is", "contains", "matches", "starts-with", "ends-with"],
+      "content_types": ["string"],
+      "description": "Name (not full path) of a file."
+    },
+    "FileItem/FullPath": {
+      "operators": ["is", "contains", "matches", "starts-with", "ends-with"],
+      "content_types": ["string"],
+      "description": "Absolute path of a file."
+    },
+    "FileItem/Md5sum": {
+      "operators": ["is"],
+      "content_types": ["md5"],
+      "description": "MD5 hash of a file."
+    },
+    "FileItem/Sha1sum": {
+      "operators": ["is"],
+      "content_types": ["sha1"],
+      "description": "SHA-1 hash of a file."
+    },
+    "FileItem/Sha256sum": {
+      "operators": ["is"],
+      "content_types": ["sha256"],
+      "description": "SHA-256 hash of a file."
+    },
+    "RegistryItem/Path": {
+      "operators": ["is", "contains", "starts-with"],
+      "content_types": ["string"],
+      "description": "Full registry key path."
+    },
+    "RegistryItem/ValueName": {
+      "operators": ["is", "contains"],
+      "content_types": ["string"],
+      "description": "Registry value name."
+    },
+    "RegistryItem/Value": {
+      "operators": ["is", "contains"],
+      "content_types": ["string"],
+      "description": "Registry value data."
+    },
+    "PortItem/localPort": {
+      "operators": ["is"],
+      "content_types": ["string"],
+      "description": "Local TCP/UDP port number."
+    },
+    "PortItem/remoteIP": {
+      "operators": ["is", "contains"],
+      "content_types": ["string"],
+      "description": "Remote IP address."
+    },
+    "ProcessItem/name": {
+      "operators": ["is", "contains", "matches"],
+      "content_types": ["string"],
+      "description": "Process image name."
+    },
+    "ProcessItem/path": {
+      "operators": ["is", "contains", "starts-with"],
+      "content_types": ["string"],
+      "description": "Full path of the process image."
+    }
+  },
+  "structure": {
+    "max_nesting": 5,
+    "allow_or_at_top_level": true,
+    "allow_or_inside_and": true,
+    "allow_and_inside_or": true
+  }
+}

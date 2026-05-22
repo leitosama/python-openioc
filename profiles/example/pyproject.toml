@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openioc-profile-example"
+version = "0.1.0"
+description = "Minimal example consumer profile for python-openioc (demo / documentation)"
+requires-python = ">=3.10"
+dependencies = ["python-openioc[profiles]>=0.1"]
+
+[project.entry-points."openioc.profiles"]
+example = "openioc_profile_example:load"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openioc_profile_example"]
+
+[tool.hatch.build]
+include = [
+    "src/openioc_profile_example/**/*.py",
+    "src/openioc_profile_example/profile.json",
+]

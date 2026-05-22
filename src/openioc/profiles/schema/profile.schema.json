@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/leitosama/python-openioc/schemas/profile/v1",
+  "title": "OpenIOC Consumer Profile",
+  "description": "Declarative description of the OpenIOC subset supported by a specific consumer product (e.g. KATA KEDR, FireEye HX).",
+  "type": "object",
+  "required": ["schema_version", "name"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Semantic version of this profile format. The engine checks that the major component matches its supported major version.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Short, unique identifier used as the registry key (e.g. 'kedr', 'fireeye-hx'). Must be stable across profile updates.",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "profile_version": {
+      "type": "string",
+      "description": "Semantic version of this profile's data. Increment when the vendor changes their supported terms or operators.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "target_product": {
+      "type": "string",
+      "description": "Human-readable name of the target product (e.g. 'KATA KEDR')."
+    },
+    "target_versions": {
+      "description": "Product version(s) these constraints apply to. Informational only — the engine does not interpret this field.",
+      "oneOf": [
+        {"type": "string"},
+        {"type": "array", "items": {"type": "string"}, "minItems": 1}
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Free-form description of the profile and its purpose."
+    },
+    "source": {
+      "type": "string",
+      "description": "URL pointing to the official documentation that defines these constraints."
+    },
+    "terms": {
+      "type": "object",
+      "description": "Allowed terms. Keys are Context.search strings (e.g. 'FileItem/FileName'). Omit entirely to allow all terms.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["operators"],
+        "additionalProperties": false,
+        "properties": {
+          "operators": {
+            "type": "array",
+            "description": "Condition values permitted for this term (e.g. 'is', 'contains', 'matches').",
+            "items": {"type": "string"},
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "content_types": {
+            "type": "array",
+            "description": "Content.content_type values permitted for this term (e.g. 'string', 'md5'). Omit to allow any content type.",
+            "items": {"type": "string"},
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable note about this term's constraints."
+          }
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "description": "Structural constraints on the indicator tree. Omit to apply no structural limits.",
+      "additionalProperties": false,
+      "properties": {
+        "max_nesting": {
+          "type": "integer",
+          "description": "Maximum depth of Indicator nesting (1 = root only, 2 = root + one level, …). Omit for no limit.",
+          "minimum": 1
+        },
+        "allow_or_at_top_level": {
+          "type": "boolean",
+          "description": "Whether the root Indicator may use the OR operator. Defaults to true.",
+          "default": true
+        },
+        "allow_or_inside_and": {
+          "type": "boolean",
+          "description": "Whether an OR Indicator may appear as a child of an AND Indicator. Defaults to true.",
+          "default": true
+        },
+        "allow_and_inside_or": {
+          "type": "boolean",
+          "description": "Whether an AND Indicator may appear as a child of an OR Indicator. Defaults to true.",
+          "default": true
+        }
+      }
+    },
+    "mappings": {
+      "type": "object",
+      "description": "Optional term-rewrite hints for the adapter (reserved for future use in v1). Keys and values are Context.search strings.",
+      "additionalProperties": {"type": "string"}
+    }
+  }
+}

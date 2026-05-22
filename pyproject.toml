@@ -12,6 +12,7 @@ requires-python = ">=3.10"
 dependencies = ["lxml>=4.9"]
 
 [project.optional-dependencies]
+profiles = ["jsonschema>=4.0"]
 dev = [
     "pytest>=7.4",
     "pytest-cov",
@@ -19,6 +20,7 @@ dev = [
     "mypy>=1.10",
     "lxml-stubs>=0.5",
     "pre-commit>=3.7",
+    "jsonschema>=4.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -29,6 +31,7 @@ include = [
     "src/openioc/**/*.py",
     "src/openioc/v10/schema/*.xsd",
     "src/openioc/v11/schema/*.xsd",
+    "src/openioc/profiles/schema/*.json",
 ]
 
 [tool.pytest.ini_options]
@@ -78,4 +81,8 @@ ignore_missing_imports = true
 # lxml-stubs incorrectly types nsmap as Mapping[str, str] excluding None keys.
 # The type: ignore on that line is unused when stubs aren't auto-discovered.
 module = ["openioc.v10.writer", "openioc.v11.writer"]
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = ["openioc.profiles.*"]
 warn_unused_ignores = false

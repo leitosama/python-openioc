@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "name": "synthetic",
+  "profile_version": "0.1.0",
+  "target_product": "Synthetic Test Consumer",
+  "description": "Minimal profile used by the engine unit tests.",
+  "terms": {
+    "FileItem/FileName": {
+      "operators": ["is", "contains"],
+      "content_types": ["string"],
+      "description": "File name."
+    },
+    "FileItem/Md5sum": {
+      "operators": ["is"],
+      "content_types": ["md5"],
+      "description": "MD5 hash."
+    }
+  },
+  "structure": {
+    "max_nesting": 2,
+    "allow_or_at_top_level": false,
+    "allow_or_inside_and": false,
+    "allow_and_inside_or": true
+  }
+}

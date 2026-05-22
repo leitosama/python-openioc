@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "name": "example",
+  "profile_version": "0.1.0",
+  "target_product": "Example Consumer",
+  "target_versions": "1.x",
+  "description": "Minimal example profile for documentation and integration-test purposes. Not a real product profile.",
+  "source": "https://github.com/leitosama/python-openioc/tree/main/profiles/example",
+  "terms": {
+    "FileItem/FileName": {
+      "operators": ["is", "contains"],
+      "content_types": ["string"],
+      "description": "Name of a file."
+    },
+    "FileItem/Md5sum": {
+      "operators": ["is"],
+      "content_types": ["md5"],
+      "description": "MD5 hash of a file."
+    },
+    "RegistryItem/Path": {
+      "operators": ["is", "contains"],
+      "content_types": ["string"],
+      "description": "Full registry key path."
+    }
+  },
+  "structure": {
+    "max_nesting": 3,
+    "allow_or_at_top_level": true,
+    "allow_or_inside_and": true,
+    "allow_and_inside_or": true
+  }
+}
